@@ -102,8 +102,9 @@ class FileParse:
             if len(body) == 2:
                 post_data = body[1]
                 try:
-                    post_data = json.loads(post_data)
-                except json.JSONDecodeError:
+                    post_data0 = parse.parse_qs(post_data, keep_blank_values=True)
+                    post_data = {k: ",".join(v) for k, v in post_data0.items()}
+                except ValueError:
                     return
             body1 = body[0]
             # 按行分割 第一行提取请求id 时间戳 时间戳精确度为纳秒
@@ -199,7 +200,7 @@ class ReplayPrepare:
         logger.info(f'共收集请求 {self.df.shape[0]} 个')
 
     def execute_rules(self, **kwargs):
-        rule_keys = ('replace_dict', 'delete_uri', 'filter_needed_uri')
+        rule_keys = ('replace_dict', 'delete_uri', 'filter_needed_uri', 'filter_needed_params_or')
         for key, value in kwargs.items():
             if key in rule_keys:
                 getattr(self, f'rule_{key}')(value)
@@ -239,6 +240,16 @@ class ReplayPrepare:
     def rule_filter_needed_uri(self, args: list = None):
         if args is not None and isinstance(args, list):
             delete_index = self.df[self.df.apply(lambda x: True if x['uri'] not in args else False, axis=1)].index
+            self.df.drop(index=delete_index, inplace=True)
+
+    def rule_filter_needed_params_or(self, args: list = None):
+        if args is not None and isinstance(args, list):
+            def func(x):
+                if any([True for i in args if i in x['get_params']]):
+                    return False
+                return True
+
+            delete_index = self.df[self.df.apply(func, axis=1)].index
             self.df.drop(index=delete_index, inplace=True)
 
     def process_timestamp(self, speed):
@@ -756,7 +767,7 @@ class ReplayMain:
 
 if __name__ == '__main__':
     # ReplayMain.replay_main()
-    path = r'E:\dingding\pubtest_web.log'
+    path = r'D:\temp\zaibei.txt'
     # path = r'/home/yxgao/Downloads/vin_request_20210428_small.log'
     rules1 = {"filter_needed_uri":
                   ["/cs/vhis/accident/query", "/cs/vhis/accident/analysis", "/cs/vhis/eval",
@@ -766,7 +777,8 @@ if __name__ == '__main__':
                                "client_user": "test",
                                "client_channel": "test",
                                "token": java_token()}}
-    ReplayMain().replay_run(gor_path=path, host1='172.16.2.2:9455', rules={},
+    rules3 = {'filter_needed_params_or': ['oper']}
+    ReplayMain().replay_run(gor_path=path, host1='172.16.2.2:9455', rules=rules3,
                             speed=3)
     # x1 = FileParse(path)
     # x1.parse_type1()

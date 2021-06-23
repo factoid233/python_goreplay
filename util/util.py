@@ -286,7 +286,7 @@ def assert_recursive(result, assert_):
 
 
 def get_root_path():
-    return os.path.abspath(os.path.join(__file__, '../../../'))
+    return os.path.abspath(os.path.join(__file__, '../../'))
 
 
 def java_token():
