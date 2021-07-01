@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from typing import Union
+from jsoncomparison import Compare as JsonCompare, NO_DIFF
+
 
 class FilterRules:
     """
@@ -67,3 +70,24 @@ class FilterRules:
 
             delete_index = self._df[self._df.apply(func, axis=1)].index
             self._df.drop(index=delete_index, inplace=True)
+
+
+class CompareRules:
+    is_pass = None
+
+    def __init__(self, resp1: Union[dict, list, str], resp2: Union[dict, list, str], ):
+        self.resp1 = resp1
+        self.resp2 = resp2
+
+    def rule_json_compare(self, ignores: Union[list, dict] = None):
+        """
+        比较单个响应结果是否一致
+        {"compare_all_equal":{"ignore":""}}
+        @param resp1:
+        @param resp2:
+        @param ignores:
+        @return:
+        """
+        _is_pass = JsonCompare(rules=ignores).check(self.resp1, self.resp2)
+
+        self.is_pass = _is_pass == NO_DIFF

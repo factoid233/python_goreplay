@@ -83,6 +83,7 @@ class FileParse:
                 data.append(res)
         # 将数据存储为dataframe格式 方便处理
         df = pd.DataFrame(data)
+        logger.info('文件解析完成')
         return df
 
     def _proc_section(self, section, _type):
@@ -199,9 +200,9 @@ class FileParse:
 
 
 if __name__ == '__main__':
-    from src.util import get_root_path
+    from src.common import get_root_path
 
-    path = os.path.join(get_root_path(), 'src', 'example', 'test.gor')
+    path = os.path.join(get_root_path(), 'src', '../example', 'test.gor')
     file_parse = FileParse(path)
     file_parse.parse_type1()
     file_parse.parse_type2()

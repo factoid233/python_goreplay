@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import pandas as pd
-from src.rules import FilterRules
+from src.replay.rules import FilterRules
 
 logger = logging.getLogger(__name__)
 
@@ -55,11 +55,11 @@ class ReplayPrepare:
 
 
 if __name__ == '__main__':
-    from src.util import get_root_path
-    from src.file_parse import FileParse
+    from src.common import get_root_path
+    from src.replay.file_parse import FileParse
     import os
 
-    path = os.path.join(get_root_path(), 'src', 'example', 'test.gor')
+    path = os.path.join(get_root_path(), 'src', '../example', 'test.gor')
     file_parse = FileParse(path)
     df = file_parse.parse_type1()
     replay_before = FilterRules(df)

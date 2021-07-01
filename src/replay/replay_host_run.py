@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import logging
+from src.replay.replay_post import ReplayPost
+from src.replay.file_parse import FileParse
+from src.replay.replay_prepare import ReplayPrepare
+from src.replay.replay_run import ReplayRun
 
-from src.replay_post import ReplayPost
-from src.file_parse import FileParse
-from src.replay_prepare import ReplayPrepare
-from src.replay_run import ReplayRun
+logger = logging.getLogger(__name__)
 
 
 class ReplayOneHost:
-    def __init__(self, gor_path: str, host: str, speed: float = 1, timeout: int = 5, rules=None, *args, **kwargs):
+    """
+    请求前准备工作
+    批量发送请求
+    请求完后处理
+    """
+    def __init__(self, df:pd.DataFrame, gor_path: str, host: str, speed: float = 1, timeout: int = 5, rules=None, *args, **kwargs):
         if rules is None:
             rules = {}
         self.gor_path = gor_path
@@ -16,7 +23,7 @@ class ReplayOneHost:
         self.speed = speed
         self.timeout = timeout
         self.rules = rules
-        self._df = pd.DataFrame()
+        self._df = df
 
         self.file_parse = None
         self.replay_prepare = None
@@ -27,10 +34,10 @@ class ReplayOneHost:
     def df(self):
         return self._df
 
-    def _run(self):
+    def run(self):
         # 初始化
-        self.file_parse = FileParse(self.gor_path)
-        self._df = self.file_parse.parse_type1()
+        # self.file_parse = FileParse(self.gor_path)
+        # self._df = self.file_parse.parse_type1()
         self.replay_prepare = ReplayPrepare(self._df)
         self.replay_run = ReplayRun(self._df)
         self.replay_post = ReplayPost(self._df)
@@ -41,14 +48,5 @@ class ReplayOneHost:
         self.replay_run.send_requests(host=self.host, timeout=self.timeout)
         self.replay_post.process_response()
 
-    @classmethod
-    def run(cls, **kwargs):
-        instance = cls(**kwargs)
-        instance._run()
-        return instance
 
 
-if __name__ == '__main__':
-    path = r'e:/temp/test7.gor'
-    ins = ReplayOneHost(path, 'api2.che300.com', 0.5, )
-    ins._run()
