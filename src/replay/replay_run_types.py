@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+主流程文件
+"""
 from multiprocessing import Manager, Process
 
 import pandas as pd
