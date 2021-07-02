@@ -102,7 +102,7 @@ class ReplayRunTypeTwo(ReplayRunType):
     def one_process(self, gor_path, host: str, speed: float = 1, timeout=5, rules_filter=None, share=None,
                     share_name=None):
         df = self.replay_one_host(gor_path, host, speed, timeout, rules_filter)
-        share[share_name] = df.to_json()
+        share[share_name] = df
 
     def replay_two_host_with_many_process(self, gor_path, host1: str, host2: str, speed: float = 1, timeout=5,
                                           rules_filter=None):
@@ -117,7 +117,8 @@ class ReplayRunTypeTwo(ReplayRunType):
                 t.start()
             for t in (t1, t2):
                 t.join()
-            self.res_host = dict(map(lambda arg: (arg[0], pd.read_json(arg[1])), d.items()))
+            # self.res_host = dict(map(lambda arg: (arg[0], pd.read_json(arg[1])), d.items()))
+            self.res_host = dict(d.items())
 
     def replay_main(self, gor_path, host1: str, host2: str, speed: float = 1, timeout=5, rules_filter=None,
                     rules_compare: dict = None, *args, **kwargs):

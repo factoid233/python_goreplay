@@ -75,7 +75,7 @@ class FilterRules:
 class CompareRules:
     is_pass = None
 
-    def __init__(self, resp1: Union[dict, list, str], resp2: Union[dict, list, str], ):
+    def __init__(self, resp1: Union[dict, list, str], resp2: Union[dict, list, str]):
         self.resp1 = resp1
         self.resp2 = resp2
 

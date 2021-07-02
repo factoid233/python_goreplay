@@ -25,7 +25,5 @@ class ReplayPost:
             lambda x: x.text if isinstance(x, httpx.Response) and x else x)
 
         self.df['get_params'] = self.df['get_params'].map(urllib.parse.urlencode)
-        # self.df['payload'] = self.df.apply(axis=1,
-        #                                    func=lambda x: x['get_params'] if x['request_method'] == 'GET'
-        #                                    else x['post_data'])
+        self.df.drop(columns=['response_obj'], inplace=True)
         logger.info(f'共发送请求 {self.df.shape[0]} 个')

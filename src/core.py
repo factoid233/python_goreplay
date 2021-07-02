@@ -5,7 +5,7 @@ from src.replay.replay_run_types import ReplayRunTypeOne, ReplayRunTypeTwo,Repla
 
 def main():
     kwargs: dict = ArgParse.load_args_config()
-    if 'no-diff' in kwargs:
+    if 'no-diff' in kwargs and kwargs.get('no-diff') is True:
         ins = ReplayRunTypeNoCompare()
     elif 'host2' in kwargs:
         ins = ReplayRunTypeTwo()
