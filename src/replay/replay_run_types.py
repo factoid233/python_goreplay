@@ -169,10 +169,11 @@ if __name__ == '__main__':
     # from src import logger_config
     # logger_config()
     # logging.basicConfig(level=logging.INFO)
-    path = os.path.join(get_root_path(), 'src', 'example', 'test.gor')
+    # path = os.path.join(get_root_path(), 'src', 'example', 'test.gor')
+    path = 'E:\dingding\ceshi_go.txt'
     # ins = ReplayRunTypeOne()
     # ins.replay_main(path, '118.190.43.227:5014', speed=10)
     ins2 = ReplayRunTypeTwo()
-    ins2.replay_main(path, host1='118.190.43.227:5014', host2='118.190.43.227:5014', speed=10)
+    ins2.replay_main(path, host1='118.190.235.150:5027', host2='118.190.235.150:5024', speed=0.5,rules_filter={"filter_needed_uri":["/cs/ocr/extractRegCertificateInfo","/cs/ocr/image/classify","/cs/ocr/qualificationAPI","/cs/ocr/remakeClsAPI","/cs/ocr/idCardAPI","/cs/ocr/nameplateAndWindscreenAPI","/cs/ocr/certificate/xiangyun","/cs/ocr/odometerAPI","/cs/ocr/qrCodeAPI","/cs/ocr/viewPointAPI","/cs/ocr/vehicleLicenseOCR"]})
     # ins3 = ReplayRunTypeNoCompare()
     # ins3.replay_main(path, host1='118.190.43.227:5014', speed=10)
