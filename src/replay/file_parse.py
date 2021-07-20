@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 import os.path
 from urllib import parse
@@ -104,10 +105,11 @@ class FileParse:
             if len(body) == 2:
                 post_data = body[1]
                 try:
-                    post_data0 = parse.parse_qs(post_data, keep_blank_values=True)
-                    post_data = {k: ",".join(v) for k, v in post_data0.items()}
-                except ValueError:
-                    return
+                    post_data = json.loads(post_data)
+                    # post_data0 = parse.parse_qs(post_data, keep_blank_values=True)
+                    # post_data = {k: ",".join(v) for k, v in post_data0.items()}
+                except json.JSONDecodeError:
+                    post_data = None
             body1 = body[0]
             # 按行分割 第一行提取请求id 时间戳 时间戳精确度为纳秒
             body2: list = re.split('\r?\n', body1)
