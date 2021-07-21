@@ -41,6 +41,8 @@ class ReplayPrepare:
 
     def process_slice(self, _slice):
         """对原始读取的df数据进行切片"""
+        if _slice is None:
+            return
         mather = re.match(r'^(?:(\d+),)?(\d+)$', _slice)
         if mather is not None:
             start = mather.group(1)
