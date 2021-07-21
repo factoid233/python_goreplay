@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
+import re
+
 import pandas as pd
 from src.replay.rules import FilterRules
 
@@ -10,7 +12,6 @@ class ReplayPrepare:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.process_other()
-        logger.info(f'共收集请求 {self.df.shape[0]} 个')
 
     def execute_rules(self, **kwargs):
         filter_rules = FilterRules(self.df)
@@ -37,6 +38,18 @@ class ReplayPrepare:
         # 实现倍速
         self.df['sleep'] = self.df['sleep'] / speed
         logger.info(f"共需运行{self.df['sleep'].max() / 60} 分钟")
+
+    def process_slice(self, _slice):
+        """对原始读取的df数据进行切片"""
+        mather = re.match(r'^(?:(\d+),)?(\d+)$', _slice)
+        if mather is not None:
+            start = mather.group(1)
+            start = int(start) if start is not None else None
+            end = int(mather.group(2))
+            need_index = self.df.loc[start:end, ].index
+            drop_indexs = set(self.df.index) - set(need_index)
+            self.df.drop(index=drop_indexs, inplace=True)
+        logger.info(f'共收集请求 {self.df.shape[0]} 个')
 
     def process_other(self):
         """

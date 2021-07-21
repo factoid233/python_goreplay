@@ -44,7 +44,7 @@ class ArgParse:
             action='store',
             type=json.loads,
             default={},
-            dest='rules',
+            dest='rules-filter',
             help="""{"replace_dict":{"替换请求参数":""}, "delete_uri":["过滤url"],"ignore":["比较时忽略相关字段key"]}"""
         )
         parser.add_argument(
@@ -52,7 +52,7 @@ class ArgParse:
             action='store',
             type=json.loads,
             default={},
-            dest='rules',
+            dest='rules-compare',
             help="""暂无"""
         )
         parser.add_argument(

@@ -49,7 +49,7 @@ class ReplayCompare:
             raise TypeError('compare_rule 只能为dict或者None')
         return ins.is_pass
 
-    def compare_data(self, compare_rules=None) -> pd.DataFrame:
+    def compare_data(self, compare_rules=None):
         """
         比较两台服务器的响应结果
         @return:
@@ -62,25 +62,22 @@ class ReplayCompare:
         id1s = set(df1.index) | set(df2.index)
         df = pd.DataFrame(columns=df1.columns)
         df['is_pass'] = None
-        if df.empty:
-            self.df = df
-        else:
-            for id1 in id1s:
-                if id1 in df1.index and id1 in df2.index:
-                    df.at[id1,
-                          ['request_method', 'uri', 'get_params', 'post_data', 'headers', 'created_time', 'remark']] \
-                        = df1.loc[id1,
-                                  ['request_method', 'uri', 'get_params', 'post_data', 'headers', 'created_time', 'remark']]
-                    # 合并两个相同的字段为一个
-                    for item in ('host', 'http_code', 'response', 'elapsed_time', 'remark'):
-                        if item == "response":
-                            # 将response合并成二元列表
-                            df.at[id1, item] = [self.str_to_json(df1.loc[id1, item]), self.str_to_json(df2.loc[id1, item])]
-                        else:
-                            _map_list = [i for i in (df1.loc[id1, item], df2.loc[id1, item]) if i]
-                            df.at[id1, item] = "|".join(map(str, _map_list))
+        for id1 in id1s:
+            if id1 in df1.index and id1 in df2.index:
+                df.at[id1,
+                      ['request_method', 'uri', 'get_params', 'post_data', 'headers', 'created_time', 'remark']] \
+                    = df1.loc[id1,
+                              ['request_method', 'uri', 'get_params', 'post_data', 'headers', 'created_time', 'remark']]
+                # 合并两个相同的字段为一个
+                for item in ('host', 'http_code', 'response', 'elapsed_time', 'remark'):
+                    if item == "response":
+                        # 将response合并成二元列表
+                        df.at[id1, item] = [self.str_to_json(df1.loc[id1, item]), self.str_to_json(df2.loc[id1, item])]
+                    else:
+                        _map_list = [i for i in (df1.loc[id1, item], df2.loc[id1, item]) if i]
+                        df.at[id1, item] = "|".join(map(str, _map_list))
 
-                    is_pass = self._is_pass(df1.loc[id1, 'response'], df2.loc[id1, 'response'], rules_kwargs=compare_rules)
-                    df.loc[id1, 'is_pass'] = "pass" if is_pass else "fail"
+                is_pass = self._is_pass(df1.loc[id1, 'response'], df2.loc[id1, 'response'], rules_kwargs=compare_rules)
+                df.loc[id1, 'is_pass'] = "pass" if is_pass else "fail"
         logger.info('比较 done. ')
         self.df = df

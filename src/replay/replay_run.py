@@ -37,6 +37,7 @@ class ReplayRun:
             if line['request_method'] == 'GET':
                 response = await client.get(url=url, params=line['get_params'], headers=line['headers'])
             elif line['request_method'] == 'POST':
+
                 response = await client.post(url=url, params=line['get_params'], json=line['post_data'],
                                              headers=line['headers'])
             response.raise_for_status()
