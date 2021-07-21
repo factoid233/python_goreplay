@@ -3,6 +3,7 @@ import datetime
 import json
 import logging
 import os
+import sys
 
 import numpy as np
 import pandas as pd
@@ -95,19 +96,19 @@ class Storage:
                     'response_compare_json', 'elapsed_time', 'remark', 'created_time']
         if self.df.empty:
             logger.info('无结果文件生成，无失败')
-            exit(0)
+            sys.exit(0)
         if 'is_pass' in self.df.keys():
-            df: pd.DataFrame = self.df.loc[lambda x: x['is_pass'] == 'fail']
-            df['response_compare_json'] = df['response'].map(self.generate_compare_json)
-            df['response'] = df['response'].map(self.response_handle)
+            drop_index = self.df[self.df['is_pass'].map(lambda x: x != 'fail')].index
+            self.df.drop(index=drop_index, inplace=True)
+            self.df['response_compare_json'] = self.df['response'].map(self.generate_compare_json)
+            self.df['response'] = self.df['response'].map(self.response_handle)
 
         else:
-            df = self.df
             for v in ('response_compare_json', 'is_pass'):
                 key_show.pop(key_show.index(v))
         # 选择部分字段存储
-        df = df[key_show].copy()
-        self.df = df.sort_values('uri')
+        self.df.drop(columns=set(self.df.keys()) - set(key_show), inplace=True)
+        self.df.sort_values('uri', inplace=True)
 
     def store(self):
         self._format_handler()
@@ -132,4 +133,3 @@ class Storage:
             df.to_csv(file_path, index=True, encoding='gbk', errors='replace', mode='a',
                       chunksize=10000)
             logger.info(f'生成结果文件{file_path}')
-
