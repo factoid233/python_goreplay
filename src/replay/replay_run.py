@@ -50,8 +50,8 @@ class ReplayRun:
                         response = await client.post(url=url, params=line['get_params'],
                                                      content=json.dumps(line['post_data'], ensure_ascii=False),
                                                      headers=line['headers'])
-            response.raise_for_status()
-            logger.debug(f"|-- {url}\n\t{response.text}")
+                    response.raise_for_status()
+                    logger.debug(f"|-- {url}\n\t{response.text}")
         except httpx.TimeoutException as exc:
             remark = "{}".format(client.timeout)
         except httpx.HTTPStatusError as exc:
