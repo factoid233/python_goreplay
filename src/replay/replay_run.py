@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 import logging
 import sys
 
@@ -37,9 +38,18 @@ class ReplayRun:
             if line['request_method'] == 'GET':
                 response = await client.get(url=url, params=line['get_params'], headers=line['headers'])
             elif line['request_method'] == 'POST':
-
-                response = await client.post(url=url, params=line['get_params'], json=line['post_data'],
-                                             headers=line['headers'])
+                content_type = line['headers'].get('Content-Type') or line['headers'].get('Content-type')
+                if content_type is not None:
+                    if 'form' in content_type:
+                        response = await client.post(url=url, params=line['get_params'], data=line['post_data'],
+                                                     headers=line['headers'])
+                    elif 'json' in content_type:
+                        response = await client.post(url=url, params=line['get_params'], json=line['post_data'],
+                                                     headers=line['headers'])
+                    else:
+                        response = await client.post(url=url, params=line['get_params'],
+                                                     content=json.dumps(line['post_data'], ensure_ascii=False),
+                                                     headers=line['headers'])
             response.raise_for_status()
             logger.debug(f"|-- {url}\n\t{response.text}")
         except httpx.TimeoutException as exc:

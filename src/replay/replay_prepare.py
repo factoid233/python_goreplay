@@ -37,10 +37,11 @@ class ReplayPrepare:
         self.df['sleep'] = (self.df['timestamp'] - self.df['timestamp'].min()).map(lambda x: x.total_seconds())
         # 实现倍速
         self.df['sleep'] = self.df['sleep'] / speed
-        logger.info(f"共需运行{self.df['sleep'].max() / 60} 分钟")
+        logger.info(f"共需运行{round(self.df['sleep'].max() / 60,2)} 分钟")
 
     def process_slice(self, _slice):
         """对原始读取的df数据进行切片"""
+        # self.df = self.df[lambda x: x['id1'] == '03e550d0822bcfd09ff02af4fdf5b375ec06dbed'].copy()
         if _slice is None:
             return
         mather = re.match(r'^(?:(\d+),)?(\d+)$', _slice)
