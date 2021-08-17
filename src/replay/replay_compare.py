@@ -15,6 +15,8 @@ class ReplayCompare:
 
     @staticmethod
     def str_to_json(_str):
+        if isinstance(_str, (list, dict)):
+            return _str
         try:
             _obj = json.loads(_str)
         except json.JSONDecodeError:

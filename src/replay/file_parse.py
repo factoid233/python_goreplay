@@ -162,7 +162,7 @@ class FileParse:
         if _type not in ('2', '3'):
             raise ValueError("_type传参只能为{'2','3'}其中一个")
         if section and section[0] == _type:
-            response = id1 = timestamp = None
+            response: str = None
             section = section.strip(self.br)
 
             # 将响应结果 与 其他内容分割
@@ -174,6 +174,10 @@ class FileParse:
                     response_split = response.split('\n')
                     if len(response_split) > 2:
                         response = response.split('\n')[1]
+                try:
+                    response = json.loads(response)
+                except json.JSONDecodeError:
+                    pass
             # body1 为除响应结果外的所有信息
             body1_text = body[0]
             # 按行分割 第一行提取请求id 时间戳 时间戳精确度为纳秒
@@ -182,7 +186,7 @@ class FileParse:
             # 无请求id 直接跳过
             if not len(line1) >= 3:
                 return None
-            _type, id1, timestamp, *_ = line1
+            _type, id1, timestamp, latency = line1
 
             # 第二行 提取 请求协议 和响应code码
             # 无第二行直接跳过
@@ -198,7 +202,8 @@ class FileParse:
                 if len(item2) == 2:
                     response_headers[item2[0]] = item2[1]
             res_dict = dict(id1=id1, timestamp=timestamp, http_code=http_code, response=response,
-                            http_version=http_version, response_headers=response_headers)
+                            http_version=http_version, response_headers=response_headers, type=int(_type),
+                            elapsed_time=latency)
             return res_dict
         elif section and section[0] in self.all_type - {_type} or section in self.section_set_pass:
             return None
