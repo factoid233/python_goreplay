@@ -205,6 +205,8 @@ class FileParse:
                 return None
             line2: list = re.split(r'\s', body1[1])
             # 无请求方式和请求内容直接跳过
+            if len(line2) < 2:
+                return None
             http_version, http_code, *_ = line2
             # response header解析
             response_headers = dict()
