@@ -102,8 +102,6 @@ class FileParse:
 
             # 将post data 与 其他内容分割
             body: list = re.split('\r?\n\r?\n', section)
-            if len(body) == 2:
-                post_data_str = body[1]
             body1 = body[0]
             # 按行分割 第一行提取请求id 时间戳 时间戳精确度为纳秒
             body2: list = re.split('\r?\n', body1)
@@ -136,19 +134,32 @@ class FileParse:
                 if len(item2) == 2:
                     headers[item2[0]] = item2[1]
             # post_data_str格式化
-            try:
-                if post_data_str is not None:
-                    post_data = json.loads(post_data_str)
-
-            except json.JSONDecodeError:
+            if len(body) == 2:
+                post_data_str = body[1]
                 try:
-                    post_data0 = parse.parse_qs(post_data_str, keep_blank_values=True)
-                    post_data = {k: ",".join(v) for k, v in post_data0.items()}
-                except ValueError:
-                    pass
+                    if post_data_str is not None:
+                        post_data = json.loads(post_data_str)
 
+                except json.JSONDecodeError:
+                    try:
+                        post_data0 = parse.parse_qs(post_data_str, keep_blank_values=True)
+                        post_data = {k: ",".join(v) for k, v in post_data0.items()}
+                    except ValueError:
+                        pass
+            elif len(body) > 2:
+                try:
+                    post_data_str = "\n".join(body[1:])
+                    if '-'*5 in post_data_str:
+                        post_data1 = re.split(r'-{5,}\w+-{0,5}\n?', post_data_str)
+                        post_data2 = [i.strip('\r\n').strip('\n') for i in post_data1 if i]
+                        post_data3 = [re.sub(r'Content-Disposition: form-data;\s+name=', '', item) for item in post_data2]
+                        post_data4 = [i.replace('\"', '').split('\n') for i in post_data3]
+                        post_data = dict([i[0], ''] if len(i) == 1 else i for i in post_data4)
+                except (IndexError, ValueError, KeyError):
+                    pass
             res_dict = dict(id1=id1, timestamp=timestamp, request_method=request_method, uri=uri,
-                            get_params=get_params, post_data=post_data, headers=headers, http_version=http_version)
+                            get_params=get_params, post_data=post_data, headers=headers, http_version=http_version,
+                            type=1)
             return res_dict
         elif section and section[0] in ('2', '3',) or section in self.section_set_pass:
             return None
