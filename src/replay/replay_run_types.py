@@ -32,7 +32,7 @@ class ReplayRunTypeOne(ReplayRunType):
     """
 
     def replay_main(self, gor_path, host1: str, speed: float = 1, timeout=5, rules_filter=None,
-                    rules_compare: dict = None, *args, **kwargs):
+                    rules_compare: dict = None, _slice=None, *args, **kwargs):
         if rules_filter is None:
             rules_filter = {}
         # 解析请求数据
@@ -48,6 +48,7 @@ class ReplayRunTypeOne(ReplayRunType):
 
         # 回放请求前处理
         replay_prepare = ReplayPrepare(df1)
+        replay_prepare.process_slice(_slice)
         replay_prepare.execute_rules(**rules_filter)
         replay_prepare.process_timestamp(speed)
         self.df = replay_prepare.df
@@ -178,12 +179,11 @@ if __name__ == '__main__':
     # logger_config()
     # logging.basicConfig(level=logging.INFO)
     # path = os.path.join(get_root_path(), 'src', 'example', 'test.gor')
-    path = 'E:\dingding\ceshi0816.txt'
+    path = 'E:\dingding\gor0902.log'
     ins = ReplayRunTypeOne()
     # ins.replay_main(path, '118.190.43.227:5014', speed=10)
     # ins2 = ReplayRunTypeTwo()
-    ins.replay_main(path, host1='172.16.1.63:8084', speed=4, rules_filter={
-        "filter_needed_uri": ["/cs/model/photo/query", "/cs/getModelPhotos", "/cs/model/photo/count/query",
-                              "/cs/model/photo/color/query", "/cs/model/photo/more/query"]}, timeout=30)
+    ins.replay_main(path, host1='api.ceshi.che300.com', speed=4, rules_filter={
+        "filter_needed_uri": ["/service/getUsedCarPrice"],"replace_dict":{"token":"123"}}, timeout=30, _slice='100')
     # ins3 = ReplayRunTypeNoCompare()
     # ins3.replay_main(path, host1='118.190.43.227:5014', speed=10)

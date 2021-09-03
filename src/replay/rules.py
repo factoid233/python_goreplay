@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import Union
+
+import pandas as pd
 from jsoncomparison import Compare as JsonCompare, NO_DIFF
 
 
@@ -40,7 +42,17 @@ class FilterRules:
                             line.pop(key)
                 return line
 
+            def func3(line: pd.Series):
+                _dict = {}
+                for key, value in args.items():
+                    if key in line['get_params'].keys():
+                        _dict[key] = line['get_params'][key]
+                    elif key in line['post_data'].keys():
+                        _dict[key] = line['post_data'][key]
+                return _dict
+
             # 根据所给参数 替换get 或者post请求中的 key value
+            self._df['replace_key'] = self._df.apply(func3, axis=1)
             self._df['get_params'] = self._df['get_params'].map(func)
             self._df['post_data'] = self._df['post_data'].map(func)
             # 取出请求header中的长度字段 会报错

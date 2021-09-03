@@ -93,7 +93,7 @@ class Storage:
 
     def _format_handler(self):
         key_show = ['uri', 'is_pass', 'request_method', 'host', 'get_params', 'post_data', 'http_code', 'response',
-                    'response_compare_json', 'elapsed_time', 'remark', 'created_time']
+                    'response_compare_json', 'elapsed_time', 'remark', 'created_time', 'replace_key']
         if self.df.empty:
             logger.info('无结果文件生成，无失败')
             sys.exit(0)
