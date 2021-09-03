@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 from typing import Union
 
 import pandas as pd
@@ -49,7 +50,7 @@ class FilterRules:
                         _dict[key] = line['get_params'][key]
                     elif key in line['post_data'].keys():
                         _dict[key] = line['post_data'][key]
-                return _dict
+                return "&".join([f'{k}={v}' for k, v in _dict.items()])
 
             # 根据所给参数 替换get 或者post请求中的 key value
             self._df['replace_key'] = self._df.apply(func3, axis=1)
