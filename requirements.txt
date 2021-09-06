@@ -1,0 +1,7 @@
+Faker==3.0.0
+numpy==1.17.4
+pandas==1.2.4
+httpx==0.16.1
+jsoncomparison==1.0.1
+trio==0.17.0
+PyYAML==5.4.1

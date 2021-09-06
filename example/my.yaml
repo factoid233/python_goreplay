@@ -1,0 +1,24 @@
+### 必填 ###
+# 回放服务器1 流量回放的ip地址带端口号
+host1: "api.ceshi.che300.com"
+# 录制的文件绝对路径
+gor_path: 'E:\dingding\gor0902.log'
+
+### 选填 ###
+# 回放服务器2
+#host2=null
+# 回放速度
+speed: 1
+# 超时时间
+timeout: 5
+# 数据切片
+_slice: '100'
+# 是否开启比较
+#no-diff=false
+
+rules_filter:
+  filter_needed_uri: ["/service/getUsedCarPrice"]
+  replace_dict:
+    token: '123'
+  # delete_uri: ["/actuator/prometheus"]
+  # filter_needed_params_or: ["oper"]
