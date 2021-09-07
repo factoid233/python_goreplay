@@ -67,7 +67,9 @@ class ReplayCompare:
         for id1 in id1s:
             if id1 in df1.index and id1 in df2.index:
                 need_keys = ['request_method', 'uri', 'get_params', 'post_data', 'headers', 'created_time', 'remark',
-                             'replace_key']
+                             ]
+                if 'replace_key' in df.keys():
+                    need_keys.append('replace_key')
                 df.at[id1, need_keys] = df1.loc[id1, need_keys]
                 # 合并两个相同的字段为一个
                 for item in ('host', 'http_code', 'response', 'elapsed_time', 'remark'):
